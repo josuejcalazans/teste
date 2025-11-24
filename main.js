@@ -10,6 +10,17 @@ let config = {
   enableFileUpload: true, // Controla botão de arquivo
 };
 
+// ===== DETECÇÃO DE IFRAME =====
+const isInIframe = window.self !== window.top;
+
+// Aplica classe no body se estiver em iframe
+if (isInIframe) {
+  document.addEventListener("DOMContentLoaded", () => {
+    document.body.classList.add("iframe-mode");
+    console.log("🖼️ Modo iframe detectado");
+  });
+}
+
 // ===== UTILITÁRIOS =====
 // Debounce para otimizar performance
 function debounce(func, wait) {
@@ -196,12 +207,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     hideLoading();
   }, 800); // Pequeno delay para suavizar
 
-  // Evento para receber credenciais via postMessage (opcional)
+  // Evento para receber credenciais via postMessage (iframe support)
   window.addEventListener("message", (event) => {
+    // Segurança: validar origem em produção
+    // if (event.origin !== "https://seu-dominio.com") return;
+    
     if (event.data && typeof event.data === "object") {
+      console.log("📨 Configurações recebidas via postMessage:", event.data);
       window.initializeChat(event.data);
     }
   });
+
+  // Se estiver em iframe, notifica o parent que está pronto
+  if (isInIframe) {
+    window.parent.postMessage({ type: "CHAT_READY" }, "*");
+    console.log("✅ Chat pronto e aguardando configurações via postMessage");
+  }
 
   // Previne comportamento padrão de arrastar arquivos
   document.addEventListener("dragover", (e) => e.preventDefault());
