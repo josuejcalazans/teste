@@ -1057,3 +1057,81 @@ body.iframe-mode .chat-container {
     page-break-inside: avoid;
   }
 }
+
+/* ===== CORREÇÃO FORTE DE RESPONSIVIDADE ===== */
+
+/* Faz com que o app não estoure a tela */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+/* Chat fixa corretamente na viewport */
+.chat-container {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100vh;
+  height: 100vh;
+}
+
+/* Área de mensagens usa espaço total corretamente */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 140px); 
+}
+
+/* Bolhas de mensagem nunca ultrapassam a tela */
+.message {
+  max-width: 85%;
+  width: auto;
+}
+
+/* Garante que imagens dentro do chat não quebrem layout */
+.message img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* INPUT — sempre visível no mobile */
+.input-container {
+  padding-bottom: calc(12px + var(--safe-area-bottom));
+}
+
+/* textarea não cresce infinito */
+#messageInput {
+  max-height: 90px;
+}
+
+/* iPhone resolve bugs de viewport segurando teclado */
+@supports (-webkit-touch-callout: none) {
+  .chat-container {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Safari iOS — evita zoom inesperado ao digitar */
+input, textarea, button {
+  font-size: 16px !important;
+}
+
+/* ===== MOBILE EXTRA SAFE ===== */
+@media (max-width: 768px) {
+  .messages {
+    padding-bottom: 12px;
+    max-height: calc(100vh - 150px);
+  }
+
+  .message {
+    font-size: 0.92rem;
+  }
+
+  .message.user,
+  .message.assistant {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+  }
+}
